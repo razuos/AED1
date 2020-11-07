@@ -1,0 +1,3 @@
+if x>10: #ok
+if(A==0 and B==10) #erro
+elif tiff==ifsul: #Comentario qualquer
