@@ -34,7 +34,6 @@ def runGuess(window: GraphWin, word: str, stickman: list):
         else:
           guessedWord = list(guessedWord)
           for i, char in enumerate(list(word)):
-            print(char)
             if char == key:
               guessedWord[i] = char
           guessedWord = ''.join(guessedWord)
@@ -50,7 +49,7 @@ def runGuess(window: GraphWin, word: str, stickman: list):
 def loop(window: GraphWin):
   lives = 5
   word = getRandomWord()
-  print(word)
+  # print(word)
 
   gameScene = drawGameScene(window)
   stickman = makeStickman(window, window.getWidth() / 2, (window.getHeight() / 2) - 70)
