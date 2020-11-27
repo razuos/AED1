@@ -2,7 +2,7 @@ from re import match
 
 # Retorna uma float de acordo com a porcentagem de funções comentadas em uma lista de linhas
 # e também adiciona o feedback às linhas do arquivo.
-def requireCommentsBeforeEveryFunction(lines: list):
+def requireCommentsBeforeEveryFunction(lines: list) -> float:
   totalDefs = 0
   commentsBeforeDefs = 0
   feedback = []
@@ -27,11 +27,11 @@ def requireCommentsBeforeEveryFunction(lines: list):
   if commentsBeforeDefs == 0: return 0.0
   return commentsBeforeDefs / totalDefs
 
-# f = open('./test/examples/1.py', 'r')
-# lines = f.readlines()
-# f.close()
-
-# requireCommentsBeforeEveryFunction(lines)
-
-# fout = open('./out.py', 'w')
-# fout.writelines(lines)
+# Lista de requisitos disponíveis no sistema.
+availableRequirements = [
+  {
+    'id': 'requireCommentsBeforeEveryFunction',
+    'description': 'Toda função requer um comentário antes',
+    'method': requireCommentsBeforeEveryFunction
+  }
+]

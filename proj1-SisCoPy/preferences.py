@@ -1,15 +1,17 @@
 from json import loads, dumps
 
 filename = './preferences.json'
-preferences = None
+
+preferences = {
+  'requirementsAndWeights': None,
+  'namingScheme': None
+}
 
 f = open(filename, 'a+')
 f.seek(0)
 contents = f.read()
+
 if len(contents) == 0:
-  preferences = {
-    'requirementsAndWeights': None
-  }
   f.write(dumps(preferences))
 else:
   preferences = loads(contents)

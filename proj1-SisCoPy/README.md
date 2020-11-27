@@ -15,8 +15,6 @@ Sistema de correção de projetos em Python
 
 ## Limitações
 
-Não funciona em projetos que utilizem bibliotecas não nativas.
-
 Necessita de uma nomenclatura especificada nos projetos.
 
 ## Comandos
@@ -24,6 +22,8 @@ Necessita de uma nomenclatura especificada nos projetos.
 `ajuda`: mostra uma lista dos comandos disponíveis e uma pequena descrição.
 
 `pesos`: seleciona os requisitos e pesos para a correção.
+
+`nomenclatura`: Seleciona o esquema de nomenclatura esperado.
 
 `corrigir`: pergunta onde os arquivos estão e realiza a sua correção utilizando os requisitos e pesos, exportando as notas para uma tabela CSV.
 
