@@ -22,7 +22,8 @@ reqsAndWeightsValidator = Validator.from_callable(
 )
 
 # Retorna uma lista com os requisitos e pesos selecionados
-def promptForRequirementsAndWeights(requirements: list)->list:
+def promptForRequirementsAndWeights(preferences: dict)->list:
+  # TODO: usar preferences
   print("Selecione os requisitos e seus respectivos pesos.")
 
   for i, requirement in enumerate(requirements, start=1):
@@ -44,11 +45,26 @@ def promptForRequirementsAndWeights(requirements: list)->list:
 
       selected.append([requirement, weight])
     except IndexError:
-      print('Índice {} inválido, ignorando.'.format())
+      print('Índice {} inválido, ignorando.'.format(index))
   
   return selected
 
-# def normalPrompt():
-#   return prompt("$ -> ",
-#     history=FileHistory("history"),
-#     auto_suggest=AutoSuggestFromHistory())
+commands = {
+  'pesos': promptForRequirementsAndWeights,
+}
+
+def normalPrompt():
+  return prompt("$ -> ",
+    history=FileHistory("history"),
+    auto_suggest=AutoSuggestFromHistory())
+
+requirements = ['requireCommentsBeforeEveryFunction']
+
+def promptForCommand():
+  command = normalPrompt()
+  while command not in commands:
+    print('Comando inválido, utilize o comando \'ajuda\' para obter ajuda.')
+    command = normalPrompt()
+  commands[command](requirements)
+
+

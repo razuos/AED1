@@ -1,12 +1,19 @@
-from cli import promptForLogin, promptForRequirementsAndWeights
+from cli import promptForLogin, promptForRequirementsAndWeights, promptForCommand
+from preferences import preferences, updatePreferences
 
 def main():
   try:
-    print("SisCoPy - Sistema de Correção de projetos Python")
+    print('SisCoPy - Sistema de Correção de projetos Python')
+    print('')
 
-    promptForLogin()
-
-    print(promptForRequirementsAndWeights(['teste1', 'teste2', 'teste3']))
+    if preferences['requirementsAndWeights'] == None:
+      print('Parece que é o seu primeiro acesso')
+      preferences['requirementsAndWeights'] = promptForRequirementsAndWeights([])
+      updatePreferences(preferences)
+    
+    # promptForLogin()
+    while True:
+      promptForCommand()
 
   except KeyboardInterrupt:
     exit(0)
