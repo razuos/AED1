@@ -49,11 +49,14 @@ def scan(path: str, namingScheme: dict)->list:
         else:
           splitted = list(reversed(strippedFilename.split('-')))
 
-        for metadata in namingScheme['order']:
-          newFile[metadata] = splitted.pop()
+        for metadata in ['student', 'class', 'activity']:
+          try:
+            newFile[metadata] = splitted.pop()
+          except IndexError:
+            newFile[metadata] = 'N/A'
 
         results.append(newFile)
 
   return results
 
-print(scan('./test/examples', availableNamingSchemes[1]))
+# print(scan('./test/examples', availableNamingSchemes[1]))

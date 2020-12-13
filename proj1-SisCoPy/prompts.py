@@ -1,11 +1,13 @@
 from prompt_toolkit import prompt
 from prompt_toolkit.history import FileHistory
-from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
+from prompt_toolkit.completion import WordCompleter
 from prompt_toolkit.validation import Validator
 from re import match
-from scanner import availableNamingSchemes
+from scan import availableNamingSchemes, scan
 from settings import settings
 from preferences import preferences, updatePreferences
+from requirements import availableRequirements
+from correction import correct, exportToCSV
 
 # Bloqueia até o usuário acertar as credenciais de acesso
 def promptForLogin():
@@ -24,10 +26,10 @@ reqsAndWeightsValidator = Validator.from_callable(
 )
 
 # Retorna uma lista com os requisitos e pesos selecionados
-def promptForRequirementsAndWeights(requirements: list)->list:
+def promptForRequirementsAndWeights()->list:
   print("Selecione os requisitos e seus respectivos pesos.\n")
 
-  for i, requirement in enumerate(requirements, start=1):
+  for i, requirement in enumerate(availableRequirements, start=1):
     print("{} - {}".format(i, requirement['description']))
 
   print("\nDigite o número do requisito seguido por uma vírgula e seu peso, terminando com ponto e vírgula.")
@@ -42,7 +44,7 @@ def promptForRequirementsAndWeights(requirements: list)->list:
       index = int(selection[0]) - 1
       weight = int(selection[1])
 
-      requirement = requirements[index]
+      requirement = availableRequirements[index]
 
       selected.append({
         'requirementId': requirement['id'],
@@ -51,7 +53,10 @@ def promptForRequirementsAndWeights(requirements: list)->list:
     except IndexError:
       print('Índice {} inválido, ignorando.'.format(index))
 
-  return selected
+  preferences['requirementsAndWeights'] = selected
+  updatePreferences(preferences)
+
+  print("Preferências atualizadas com sucesso.")
 
 # Valida a entrada utilizada na função promptForNamingScheme
 namingSchemeValidator = Validator.from_callable(
@@ -60,29 +65,28 @@ namingSchemeValidator = Validator.from_callable(
   move_cursor_to_end=True,
 )
 
-def promptForNamingScheme(namingSchemes: list) -> dict:
+def promptForNamingScheme() -> dict:
   print("Selecione um entre os esquemas de nomes")
 
-  for i, namingScheme in enumerate(namingSchemes, start=1):
+  for i, namingScheme in enumerate(availableNamingSchemes, start=1):
     print("{} - {}".format(i, namingScheme['description']))
 
   userInput = prompt("Opção: ", validator=namingSchemeValidator, validate_while_typing=True)
 
-  selected = namingSchemes[int(userInput) - 1]
+  selected = availableNamingSchemes[int(userInput) - 1]
   
-  return selected
+  preferences['namingScheme'] = selected
+  updatePreferences(preferences)
 
-def normalPrompt():
-  return prompt("$ -> ",
-    history=FileHistory("history"),
-    auto_suggest=AutoSuggestFromHistory())
+  print("Preferências atualizadas com sucesso.")
 
 def promptForCommand():
-  command = normalPrompt()
-  # while command not in commands:
-  #   print('Comando inválido, utilize o comando \'ajuda\' para obter ajuda.')
-  #   command = normalPrompt()
-  # commands[command](requirements)
+  commands_completer = WordCompleter(dict.keys(commands))
+  command = prompt("$ -> ", completer=commands_completer, history=FileHistory('./history'))
+  if command not in commands:
+    print('Comando inválido, utilize o comando \'ajuda\' para obter ajuda.')
+  else:
+    commands[command]['method']()
 
 # Valida a entrada utilizada na função promptForRequirementsAndWeights
 confirmationValidator = Validator.from_callable(
@@ -94,3 +98,37 @@ def promptForConfirmation(message: str)->bool:
   choice = prompt("{} (S/N): ".format(message), validator=confirmationValidator, validate_while_typing=True)
   if choice == 'S': return True
   return False
+
+def ajuda():
+  print(' TEXTO DE AJUDA')
+
+def corrigir():
+  files = scan('./projetos', preferences['namingScheme'])
+  print("Corrigindo {} arquivo(s) válidos.".format(len(files)))
+  export = promptForConfirmation('Deseja exportar a correção para CSV?')
+  files = correct(files)
+  if export: 
+    exportToCSV(files)
+  else:
+    for file in files:
+      print("{}: Nota {}".format(file['id'], file['score']))
+  print("Correção efetuada com sucesso!")
+
+commands = {
+  'ajuda': {
+    'helpText': 'Mostra os comandos do sistema',
+    'method': ajuda
+  },
+  'pesos': {
+    'helpText': 'Seleciona os requisitos e pesos para a correção',
+    'method': promptForRequirementsAndWeights
+  },
+  'nomenclatura': {
+    'helpText': 'Seleciona a nomenclatura dos arquivos utilizados para a correção',
+    'method': promptForNamingScheme
+  },
+  'corrigir': {
+    'helpText': 'Corrige os arquivos no diretório \'projetos\' de acordo com as suas preferências.',
+    'method': corrigir
+  },
+}

@@ -1,6 +1,7 @@
 # Application specific ignores
 preferences.json
 history
+*.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
