@@ -1,4 +1,4 @@
-from prompts import promptForLogin, promptForCommand
+from prompts import promptForLogin, promptForCommand, promptForRequirementsAndWeights, promptForNamingScheme
 from preferences import preferences
 
 def main():
@@ -14,6 +14,9 @@ def main():
       print('*--------------------------------------*')
       print('| Bem-vindo(a) ao seu primeiro acesso! |')
       print('*--------------------------------------*\n')
+
+      promptForRequirementsAndWeights()
+      promptForNamingScheme()
       
     else:
 

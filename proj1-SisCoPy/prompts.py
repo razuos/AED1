@@ -100,7 +100,8 @@ def promptForConfirmation(message: str)->bool:
   return False
 
 def ajuda():
-  print(' TEXTO DE AJUDA')
+  for key in dict.keys(commands):
+    print("{}: {}".format(key, commands[key]['helpText']))
 
 def corrigir():
   files = scan('./projetos', preferences['namingScheme'])
